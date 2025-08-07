@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lista de Tareas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .contenedor {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #bbb;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ff6f61;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      background: #eee;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      border-radius: 4px;
+    }
+
+    .completado {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    .acciones button {
+      margin-left: 5px;
+      background: #999;
+      padding: 5px 8px;
+      border-radius: 3px;
+      border: none;
+      color: white;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .acciones button:hover {
+      background: #666;
+    }
+  </style>
+</head>
+<body>
+
+<div class="contenedor">
+  <h2>📝 Lista de Tareas</h2>
+  <input type="text" id="nuevaTarea" placeholder="Escribe una tarea...">
+  <button onclick="agregarTarea()">Agregar</button>
+
+  <ul id="listaTareas"></ul>
+</div>
+
+<script>
+  let tareas = JSON.parse(localStorage.getItem('tareas')) || [];
+
+  function mostrarTareas() {
+    const lista = document.getElementById('listaTareas');
+    lista.innerHTML = '';
+
+    tareas.forEach((tarea, index) => {
+      const li = document.createElement('li');
+      li.className = tarea.completada ? 'completado' : '';
+      li.innerHTML = `
+        ${tarea.texto}
+        <div class="acciones">
+          <button onclick="completarTarea(${index})">✔</button>
+          <button onclick="eliminarTarea(${index})">✖</button>
+        </div>
+      `;
+      lista.appendChild(li);
+    });
+
+    localStorage.setItem('tareas', JSON.stringify(tareas));
+  }
+
+  function agregarTarea() {
+    const input = document.getElementById('nuevaTarea');
+    const texto = input.value.trim();
+
+    if (texto !== '') {
+      tareas.push({ texto: texto, completada: false });
+      input.value = '';
+      mostrarTareas();
+    }
+  }
+
+  function completarTarea(index) {
+    tareas[index].completada = !tareas[index].completada;
+    mostrarTareas();
+  }
+
+  function eliminarTarea(index) {
+    tareas.splice(index, 1);
+    mostrarTareas();
+  }
+
+  mostrarTareas();
+</script>
+
+</body>
+</html>
